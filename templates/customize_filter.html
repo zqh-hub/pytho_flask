@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自定义过滤器</title>
+</head>
+<body>
+{{ msg | filter_by_fun(new = "flask") }}
+{{ msg | filter_by_annot(new = "flask") }}
+</body>
+</html>

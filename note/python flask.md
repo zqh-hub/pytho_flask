@@ -539,3 +539,177 @@ def dic_temp():
 </body>
 ```
 
+###### 自定义过滤器
+
+```python
+#app.py
+from flask import Flask, render_template
+import settings
+
+app = Flask(__name__)
+app.config.from_object(settings)
+
+@app.route("/customize_filter")
+def customize_filter():
+    msg = "hello world"
+    lis = [1, 2, 3]
+    return render_template("customize_filter.html", msg=msg, lis=lis)
+
+
+# 方式1：通过函数
+def add_filter_by_fun(old, new):
+    rep = old.replace("world", new)
+    return rep  # 一定要返回值
+
+app.add_template_filter(add_filter_by_fun, "filter_by_fun")
+
+
+# 方式2：通过注解
+@app.template_filter("filter_by_annot")
+def add_filter_by_annot(old, new):
+    rep = old.replace("world", new)
+    return rep  # 一定要返回值
+    
+# template/customize_filter.html
+<body>
+{{ msg | filter_by_fun(new = "flask") }}
+{{ msg | filter_by_annot(new = "flask") }}
+</body>
+```
+
+###### 模板继承extend
+
+```python
+# base.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}基础page的title{% endblock %}</title>
+    <style>
+        #nav {
+            background-color: cadetblue;
+        }
+
+        #top {
+            background-color: darkolivegreen;
+        }
+
+        #middle {
+            height: 500px;
+            background-color: darkslategrey;
+        }
+
+        #foot {
+            background-color: darkolivegreen;
+        }
+    </style>
+    {% block my_css %}{% endblock %}
+</head>
+<body>
+<div id="nav">导航栏</div>
+<div id="top">头部</div>
+<div id="middle">
+    {% block middle %}中间内容{% endblock %}
+</div>
+<div id="foot">底部</div>
+{% block script %}
+
+{% endblock %}
+</body>
+</html>
+
+# extend.html
+{% extends "base.html" %}      {# 继承 base page #}
+{% block title %}         {# title #}
+    extend
+{% endblock %}
+
+{% block my_css %}         {# css #}
+    <style>
+        #middle {
+            background-color: cadetblue;
+        }
+    </style>
+  	{# 引进外部css #}
+		<link rel="stylesheet" href="{{ url_for("static",filename="css/my_css.css") }}">
+{% endblock %}
+{% block middle %}           {# middle #}
+    <button id="btn">点我</button>
+{% endblock %}
+{% block script %}            {# script #}
+    <script>
+        btn = document.getElementById("btn")
+        btn.onclick = function () {
+            alert("你竟然点我")
+        }
+    </script>
+{% endblock %}
+```
+
+###### 模板导入include
+
+```python
+# template/common/header.html
+<div style="background-color: darkolivegreen">
+    我是头部
+</div>
+
+# template/include.html
+<body>
+{% include  "common/header.html" %}       {# include #}
+<h3>这里是include</h3>
+</body>
+```
+
+###### 模板的宏
+
+```python
+# template/common/macro.html
+{# 这里把所有的宏单独写出来 #}
+{% macro form(action,method="POST",value="登录") %}
+    <form action="{{ action }}" method="{{ method }}">
+        Username:<input type="text" name="username">
+        Password:<input type="text" name="password">
+        <input type="submit" value="{{ value }}">
+    </form>
+{% endmacro %}
+
+# template/macro1.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>宏</title>
+</head>
+<body>
+{# 宏其实就是定一个函数,可以写在内部，也可以在外部   - - - - - - - - - - - - - - 将宏定义在内部
+{% macro form(action,method="POST",value="登录") %}
+    <form action="{{ action }}" method="{{ method }}">
+        Username:<input type="text" name="username">
+        Password:<input type="text" name="password">
+        <input type="submit" value="{{ value }}">
+    </form>
+{% endmacro %}
+#}
+
+{# 使用内部的宏
+{{ form(action="/macro") }} #}   - - - - - - - - - - - - - - 使用内部的宏
+
+{# 引入外部的宏 #}
+{% import "common/macro.html" as ro %}   - - - - - - - - - - - - - - 使用外部的宏
+{{ ro.form(action="/macro",value="提交") }}
+</body>
+</html>
+```
+
+###### 模板中的变量
+
+```
+# 全局变量
+{% set username="jojo" %}    
+{{ username }}     -------使用
+# 局部变量
+with -------
+```
+

@@ -1,0 +1,9 @@
+{% macro form(action,method="POST",value="登录") %}
+    <form action="{{ action }}" method="{{ method }}">
+        Username:<input type="text" name="username">
+        Password:<input type="text" name="password">
+        <input type="submit" value="{{ value }}">
+    </form>
+{% endmacro %}
+
+{# 这里把所有的宏单独写出来 #}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>宏</title>
+</head>
+<body>
+{# 宏其实就是定一个函数,可以写在内部，也可以在外部
+{% macro form(action,method="POST",value="登录") %}
+    <form action="{{ action }}" method="{{ method }}">
+        Username:<input type="text" name="username">
+        Password:<input type="text" name="password">
+        <input type="submit" value="{{ value }}">
+    </form>
+{% endmacro %}
+#}
+
+{# 使用内部的宏
+{{ form(action="/macro") }} #}
+
+{# 引入外部的宏 #}
+{% import "common/macro.html" as ro %}
+{{ ro.form(action="/macro",value="提交") }}
+</body>
+</html>

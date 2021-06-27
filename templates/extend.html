@@ -1,0 +1,24 @@
+{% extends "base.html" %}      {# 继承 base page #}
+{% block title %}       {# title #}
+    extend
+{% endblock %}
+
+{% block my_css %}        {# css #}
+    <style>
+        #middle {
+            background-color: cadetblue;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for("static",filename="css/my_css.css") }}">     {# 引进外部css #}
+{% endblock %}
+{% block middle %}          {# middle #}
+    <button id="btn">点我</button>
+{% endblock %}
+{% block script %}      {# script #}
+    <script>
+        btn = document.getElementById("btn")
+        btn.onclick = function () {
+            alert("你竟然点我")
+        }
+    </script>
+{% endblock %}
