@@ -345,7 +345,7 @@ def index():
     return template
 ```
 
-![redirect_001](/Users/eric/Documents/python/python_code/python_flask/note/img/redirect_001.png)
+![redirect_001](/Users/eric/Documents/python/python_code/python_flask_01/note/img/redirect_001.png)
 
 ###### url_for
 

@@ -7,7 +7,7 @@ app.config.from_object(settings)
 
 @app.route("/macro", methods=["GET", "POST"])
 def macro():
-    return ""
+    return "gg"
 
 
 if __name__ == '__main__':
