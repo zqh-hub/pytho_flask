@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        td {
+            border: 30px;
+        }
+    </style>
+</head>
+<body>
+<table>
+    {% for user in users %}
+        <tr>
+            <td>{{ loop.index0 }}</td>  {# index,reindex,index0,reindex0 #}
+            <td>{{ loop.first }}</td>   {# first:判断是否是第一行;last:判断是否是最后一行 #}
+
+            <td>{{ user.name }}</td>
+            <td>{{ user.age }}</td>
+            <td>{{ user.friends }}</td>
+            <td>{{ user.friends.1 }}</td>
+        </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

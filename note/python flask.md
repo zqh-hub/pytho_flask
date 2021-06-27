@@ -305,3 +305,237 @@ if __name__ == '__main__':
 </body>
 ```
 
+###### 重定向
+
+```python
+import json
+
+from flask import Flask, render_template, request, Response, redirect
+import settings
+
+app = Flask(__name__)
+app.config.from_object(settings)
+users = []
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":  # method:获取请求方式
+        username = request.form.get("name")
+        password = request.form.get("pwd")
+        re_password = request.form.get("re_pwd")
+        if re_password == password:
+            user = {"username": username, "password": password}
+            users.append(user)
+            return redirect("/index") # 注册成功后，重定向到首页
+        else:
+            return "两次密码不一致"
+    template = render_template("register.html")
+    return template
+
+
+@app.route("/show_users")
+def show_users():
+    data = json.dumps(users)
+    return data
+
+
+@app.route("/index")
+def index():
+    template = render_template("index.html")
+    return template
+```
+
+![redirect_001](/Users/eric/Documents/python/python_code/python_flask/note/img/redirect_001.png)
+
+###### url_for
+
+```python
+from flask import Flask, render_template, request, redirect, url_for
+import settings
+
+app = Flask(__name__)
+app.config.from_object(settings)
+
+@app.route("/index", endpoint="home")  # endpoint:简单说是给这个路由起了一个别名，因为生产中，路由是很长的，这样比较方便
+def index():
+    return render_template("index.html")
+
+@app.route("/register", endpoint="reg", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        return redirect(url_for("home"))  # 反向找到/index
+    return render_template("register.html")
+
+
+if __name__ == '__main__':
+    app.run(host="0.0.0.0", port=9090)
+```
+
+###### 模板取值
+
+```python
+# app.py
+from flask import Flask, render_template
+import settings
+
+app = Flask(__name__)
+app.config.from_object(settings)
+
+
+class Mac:
+    def __init__(self, brand, color):
+        self.brand = brand
+        self.color = color
+
+    def __str__(self):
+        return self.brand
+
+    def get_color(self):
+        return self.color
+
+
+@app.route("/show")
+def show():
+    name = "coco"  # 字符串
+    age = 24  # 数字
+    friends = ["jojo", "gogo", "soso"]  # 列表
+    likes = {"like1": "馍", "like2": "面条"}  # 字典
+    tup = ("tuple_001", "tuple_002")
+    mac = Mac("apple", "银色")  # 对象
+    return render_template("show.html", name=name, age=age, friends=friends, likes=likes, tup=tup, mac=mac)
+
+# template/show.html
+<body>
+<p>name:{{ name }}</p>
+<p>age:{{ age }}</p>
+<p>{{ friends.1 }}</p>
+<p>{{ likes.like1 }}-----{{ likes.get("like1") }}</p>
+<p>{{ tup.1 }}</p>
+<p>{{ mac }}</p> # 默认调用__str__
+<p> {{ mac.brand }} ----- {{ mac.color }}</p>
+</body>
+```
+
+###### 模板注释
+
+```python
+# 模板引擎就不再去渲染它了
+{# <p> {{ mac.brand }} ----- {{ mac.color }}</p> #}
+```
+
+###### 模板块
+
+```python
+<ul>   # for
+    {% for friend in friends %}
+        <li>{{ friend }}</li>
+    {% endfor %}
+</ul>
+---- ---- ---- ---- ---- ---- ---- ---- ---- 
+<ul>  # if -- else
+    {% for friend in friends %}
+        {% if friend | length>2 %}
+            <li style="color: cadetblue">{{ friend }}</li>
+        {% else %}
+            <li>{{ friend }}</li>
+        {% endif %}
+
+    {% endfor %}
+</ul>
+</body>
+---- ---- ---- ---- ---- ---- ---- ---- ---- 
+users = [
+        {"name": "123", "age": 12, "friends": ["coco", "soso"]},
+        {"name": "123", "age": 12, "friends": ["coco", "soso"]},
+        {"name": "123", "age": 12, "friends": ["coco", "soso"]}
+    ]
+
+<table>
+    {% for user in users %}
+        <tr>
+            <td>{{ user.name }}</td>
+            <td>{{ user.age }}</td>
+            <td>{{ user.friends }}</td>
+            <td>{{ user.friends.1 }}</td>
+        </tr>
+    {% endfor %}
+</table>
+```
+
+###### loop
+
+```python
+<table>
+    {% for user in users %}
+        <tr>
+            <td>{{ loop.index0 }}</td>  {# index,reindex,index0,reindex0 #}
+            <td>{{ loop.first }}</td>   {# first:判断是否是第一行;last:判断是否是最后一行 #}
+
+            <td>{{ user.name }}</td>
+            <td>{{ user.age }}</td>
+            <td>{{ user.friends }}</td>
+            <td>{{ user.friends.1 }}</td>
+        </tr>
+    {% endfor %}
+</table>
+```
+
+###### 过滤器
+
+```
+# app.py
+@app.route("/filter")
+def filter():
+    content = "<h1>不会转译</h1>"
+    msg = "hello flask"
+    lis_str = ["coco", "jojo", "gogo"]
+    lis_int = [1, 2, 3, 0]
+    return render_template("filter.html", content=content, msg=msg, lis_str=lis_str, lis_int=lis_int)
+# 字符串常见过滤器：
+<body>
+{{ content | safe }}  {# 禁止转译 #}
+{{ msg | upper }}  {# upper:大写；lower：小写 #}
+{{ msg | capitalize }}  {# 首字母大写 #}
+{{ msg | title }}  {# 每句话的每个单词的首字母大写 #}
+{{ msg | reverse }}  {# 翻转 #}
+{{ "%s" | format(msg) }}  {# 格式化 #}
+{{ msg | truncate(4) }}  {# truncate会返回一个被阶段性的字符串#}
+</body>
+
+# 列表常见过滤器
+{{ lis_str | length }} {# 长度 #}
+{{ lis_str | first }} {# 第一个值 #}
+{{ lis_str | last }} {# 最后一个值 #}
+{{ lis_int | sum }} {# 求和 #}
+{{ lis_int | sort }} {# 排序 #}
+```
+
+###### 读取字典
+
+```python
+#app.py
+@app.route("/dic")
+def dic_temp():
+    users = [
+        {"name": "123", "age": 12, "friends": ["coco", "soso"]},
+        {"name": "123", "age": 12, "friends": ["coco", "soso"]},
+        {"name": "123", "age": 12, "friends": ["coco", "soso"]}
+    ]
+    return render_template("dic.html", users=users)
+    
+# template/dic.html
+<body>
+{% for v in users.0.values() %}    {# values #}
+    <p>{{ v }}</p>
+{% endfor %}
+
+{% for k in users.0.keys() %}   {# keys #}
+    <p>{{ k }}</p>
+{% endfor %}
+  
+{% for k,v in users.0.items() %}   {# items #}
+    <p>{{ k }}-----{{ v }}</p>
+{% endfor %}
+</body>
+```
+

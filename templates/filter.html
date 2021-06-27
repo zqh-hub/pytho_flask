@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<body>
+{{ content | safe }} {# 禁止转译 #}
+<br>
+{{ msg | upper }} {# upper:大写；lower：小写 #}
+<br>
+{{ msg | capitalize }} {# 首字母大写 #}
+<br>
+{{ msg | title }} {# 每句话的每个单词的首字母大写 #}
+<br>
+{{ msg | reverse }} {# 翻转 #}
+<br>
+{{ "%s" | format(msg) }} {# 格式化 #}
+<br>
+{{ msg | truncate(4) }} {# truncate会返回一个被阶段性的字符串#}
+
+{{ lis_str | length }} {# 长度 #}
+{{ lis_str | first }} {# 第一个值 #}
+{{ lis_str | last }} {# 最后一个值 #}
+{{ lis_int | sum }} {# 求和 #}
+{{ lis_int | sort }} {# 排序 #}
+</body>
+</html>

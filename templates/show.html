@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>展示</title>
+</head>
+<body>
+<p>name:{{ name }}</p>
+<p>age:{{ age }}</p>
+<p>{{ friends.1 }}</p>
+<p>{{ likes.like1 }}-----{{ likes.get("like1") }}</p>
+<p>{{ tup.1 }}</p>
+<p>{{ mac }}</p> # 默认调用__str__
+{#<p> {{ mac.brand }} ----- {{ mac.color }}</p>#}
+
+<ul>
+    {% for friend in friends %}
+        <li>{{ friend }}</li>
+    {% endfor %}
+</ul>
+<hr>
+<ul>
+    {% for friend in friends %}
+        {% if friend | length>2 %}
+            <li style="color: cadetblue">{{ friend }}</li>
+        {% else %}
+            <li>{{ friend }}</li>
+        {% endif %}
+
+    {% endfor %}
+</ul>
+<hr>
+<table>
+    {% for user in users %}
+        <tr>
+            <td>{{ user.name }}</td>
+            <td>{{ user.age }}</td>
+            <td>{{ user.friends }}</td>
+            <td>{{ user.friends.1 }}</td>
+        </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

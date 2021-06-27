@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dic</title>
+</head>
+<body>
+{# values #}
+{% for v in users.0.values() %}
+    <p>{{ v }}</p>
+{% endfor %}
+
+{# keys #}
+{% for k in users.0.keys() %}
+    <p>{{ k }}</p>
+{% endfor %}
+
+{# values #}
+{% for k,v in users.0.items() %}
+    <p>{{ k }}-----{{ v }}</p>
+{% endfor %}
+</body>
+</html>

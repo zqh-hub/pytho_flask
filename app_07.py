@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, render_template, request, Response
+from flask import Flask, render_template, request, Response, redirect
 import settings
 
 app = Flask(__name__)
@@ -17,7 +17,7 @@ def register():
         if re_password == password:
             user = {"username": username, "password": password}
             users.append(user)
-            return "注册成功"
+            return redirect("/index")
         else:
             return "两次密码不一致"
     template = render_template("register.html")
@@ -28,6 +28,12 @@ def register():
 def show_users():
     data = json.dumps(users)
     return data
+
+
+@app.route("/index")
+def index():
+    template = render_template("index.html")
+    return template
 
 
 if __name__ == '__main__':
